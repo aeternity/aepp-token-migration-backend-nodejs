@@ -1,15 +1,19 @@
 import * as dotenv from 'dotenv'
-dotenv.config({ path: __dirname+'/.env' })
+dotenv.config({ path: __dirname + '/.env' })
 const Sequelize = require('sequelize')
 
 import {importHolders} from './controllers/holderController'
+import { dataArray, setRequiredVariable } from './helpers'
 import logger from './logger'
 
-const sequelize = new Sequelize(<string>process.env.DB_URL, {
+const dbUrl = setRequiredVariable('DB_URL')
+const tableName = setRequiredVariable('TABLE_NAME')
+
+const sequelize = new Sequelize(dbUrl, {
   logging: false
 })
 
-const Holder = sequelize.define(process.env.TABLE_NAME,
+const Holder = sequelize.define(tableName,
   {
     hash: { type: Sequelize.STRING, allowNull: false },
     eth_address: { type: Sequelize.STRING, allowNull: false},
@@ -21,7 +25,7 @@ const Holder = sequelize.define(process.env.TABLE_NAME,
   },
   {
     freezeTableName: true,
-    tableName: process.env.TABLE_NAME
+    tableName: tableName
   }
 );
 
@@ -37,7 +41,7 @@ sequelize.authenticate().then(async () => {
       await importHolders()
       logger.info('COMPLETE: Import data.')
     } else {
-      if (entryCount != 21016) {
+      if (entryCount != dataArray.length) {
         throw new Error('Incorrect dataset. Please delete your database table then restart the application.')
       }
     }
