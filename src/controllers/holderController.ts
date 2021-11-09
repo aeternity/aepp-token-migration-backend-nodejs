@@ -3,13 +3,11 @@ import Holder from '../holders';
 
 import MerkleTree from '../createMerkleTree';
 import * as ae from '../aeternitySdk';
-import data from '../data/final-token-holders-sorted.json';
 
 import logger from '../logger';
+import { dataArray } from '../helpers';
 
-var data_to_array: string[] = []
-data_to_array = Object.entries(data).map((e) => ( JSON.stringify({ [e[0]]: e[1] }).replace(/{|}|"/g, '').toUpperCase()));
-var tree = new MerkleTree(data_to_array)
+const tree = new MerkleTree(dataArray)
 
 const rootHash = (req: Request, res: Response) => {
   return res.send({'status': true, 'tree': {'root': tree.getRootHash(), 'length': tree.leaves.length}});
@@ -129,12 +127,12 @@ const getEntryByEthPk = async (ethAddress: String) => {
 }
 
 const importHolders = async (index: number = 0) => {
-  if(index < data_to_array.length) {
+  if(index < dataArray.length) {
     var body = {
-      hash: tree.hashFunction(data_to_array[index]),
-      eth_address: data_to_array[index].split(':')[0],
-      balance: data_to_array[index].split(':')[1],
-      siblings: tree.getProof(data_to_array[index]),
+      hash: tree.hashFunction(dataArray[index]),
+      eth_address: dataArray[index].split(':')[0],
+      balance: dataArray[index].split(':')[1],
+      siblings: tree.getProof(dataArray[index]),
       leaf_index: index,
       migrateTxHash: ''
     }

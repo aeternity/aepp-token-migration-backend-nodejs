@@ -12,19 +12,33 @@ This application is a result of the [æUnited](https://github.com/aeternity/boun
     - `https://testnet.aeternity.io` (testnet)
 - Set the private and public key via env variable:
     - Can be created via [aecli](https://github.com/aeternity/aepp-cli-js) or any tool you like
-- Project was tested with Node.js version 14
 
-## Env variables
+Note:
+- The project was tested with Node.js version 14 and 16
+
+## Environment variables
+
+### Required
 ```
 DB_URL=postgresql://user:pass@url:port/db
 TABLE_NAME = <table_name>
-COMPILER_URL=https://latest.compiler.aepps.com
-CONTRACT_ADDRESS=ct_eJhrb....
-NODE_URL=https://mainnet.aeternity.io
+
 PRIVATE_KEY=52f9....
 PUBLIC_KEY=ak_2H4....
-LOG_LEVEL=info
 ```
+
+The application won't run if those variables are not set.
+
+### Optional
+```
+TOKEN_HOLDERS_FILE: token-holders-local.json
+COMPILER_URL=https://compiler.aepps.com
+CONTRACT_ADDRESS=ct_eJhrb....
+NODE_URL=https://mainnet.aeternity.io
+LOG_LEVEL=debug
+```
+
+These variables can be used to perform local tests or to change the [log level](https://github.com/winstonjs/winston#logging-levels).
 
 ## Run the script from _src_ directory locally
 

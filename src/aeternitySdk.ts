@@ -3,34 +3,37 @@ const fs = require('fs')
 const { Universal, Node, MemoryAccount } = require('@aeternity/aepp-sdk')
 
 const contractInterfaceSource = fs.readFileSync(__dirname + '/TokenMigrationInterface.aes', 'utf-8')
+import { setRequiredVariable } from './helpers'
 import logger from './logger'
 
+const publicKey = setRequiredVariable('PUBLIC_KEY')
+const privateKey = setRequiredVariable('PRIVATE_KEY')
 let contract: any = null
 
 const init = async () => {
-  logger.info(`BEGIN: Initialization of SDK and contract instance started`)
+  logger.info(`BEGIN: Initialization of SDK and contract instance`)
   const keyPair = {
-    "publicKey": process.env.PUBLIC_KEY,
-    "secretKey": process.env.PRIVATE_KEY
+    "publicKey": publicKey,
+    "secretKey": privateKey
   }
   const client_node = await Universal({
     nodes: [
       {
         name: 'node',
         instance: await Node({
-          url: process.env.NODE_URL,
+          url: process.env.NODE_URL || 'https://mainnet.aeternity.io',
         }),
       }],
     accounts: [MemoryAccount({ keypair: keyPair })],
-    compilerUrl: process.env.COMPILER_URL
+    compilerUrl: process.env.COMPILER_URL || 'https://compiler.aepps.com'
   });
-  contract = await client_node.getContractInstance(contractInterfaceSource, { contractAddress: process.env.CONTRACT_ADDRESS })
-  logger.info(`COMPLETE: Initialization of SDK and contract instance finished`)
+  contract = await client_node.getContractInstance(contractInterfaceSource, { contractAddress: process.env.CONTRACT_ADDRESS || 'ct_eJhrbPPS4V97VLKEVbSCJFpdA4uyXiZujQyLqMFoYV88TzDe6' })
+  logger.info(`COMPLETE: Initialization of SDK and contract instance`)
 }
 
 const checkInizialization = () => {
   if(contract === null) {
-    throw new Error(`SDK and contract instance not initialized.`)
+    throw new Error(`SDK and contract instance not initialized yet.`)
   }
 }
 
