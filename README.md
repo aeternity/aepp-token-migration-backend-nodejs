@@ -5,11 +5,6 @@ This application is a result of the [æUnited](https://github.com/aeternity/boun
 
 ## Requirements
 - Set up `PostgreSQL` and provide the connection URL via env variable.
-- Set the migration contract address via env variable:
-    - `ct_eJhrbPPS4V97VLKEVbSCJFpdA4uyXiZujQyLqMFoYV88TzDe6` or [deploy your own](https://github.com/aeternity/aepp-token-migration-smart-contract/blob/master/contracts/TokenMigration.aes)
-- Set the Node URL via env variable:
-    - `https://mainnet.aeternity.io` (mainnet)
-    - `https://testnet.aeternity.io` (testnet)
 - Set the private and public key via env variable:
     - Can be created via [aecli](https://github.com/aeternity/aepp-cli-js) or any tool you like
 
@@ -20,25 +15,28 @@ Note:
 
 ### Required
 ```
-DB_URL=postgresql://user:pass@url:port/db
-TABLE_NAME = <table_name>
+DB_URL              = postgresql://user:pass@url:port/db
+TABLE_NAME          = <table_name>
 
-PRIVATE_KEY=52f9....
-PUBLIC_KEY=ak_2H4....
+PRIVATE_KEY         = 52f9...
+PUBLIC_KEY          = ak_2H4...
 ```
 
 The application won't run if those variables are not set.
 
 ### Optional
 ```
-TOKEN_HOLDERS_FILE: token-holders-local.json
-COMPILER_URL=https://compiler.aepps.com
-CONTRACT_ADDRESS=ct_eJhrb....
-NODE_URL=https://mainnet.aeternity.io
-LOG_LEVEL=debug
+TOKEN_HOLDERS_FILE  = token-holders-local.json
+COMPILER_URL        = https://compiler.aepps.com
+CONTRACT_ADDRESS    = ct_eJhrb...
+NODE_URL            = https://mainnet.aeternity.io
+LOG_LEVEL           = debug
+PORT                = 1337
 ```
 
-These variables can be used to perform local tests or to change the [log level](https://github.com/winstonjs/winston#logging-levels).
+Note:
+- These variables are predefined with default values and can be changed to perform local tests or to change the [log level](https://github.com/winstonjs/winston#logging-levels).
+- If required you can [deploy your own](https://github.com/aeternity/aepp-token-migration-smart-contract/blob/master/contracts/TokenMigration.aes) contract for testing purposes.
 
 ## Run the script from _src_ directory locally
 
