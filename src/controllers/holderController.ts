@@ -13,7 +13,7 @@ const rootHash = (req: Request, res: Response) => {
 const getInfoByEthAddress = async (req: Request, res: Response) => {
   const ethAddress = req.params.ethAddress;
   try {
-    const holder = await Holder.findOne({where: {eth_address: ethAddress.toUpperCase()}})
+    const holder = await Holder.findOne({where: {eth_address: ethAddress.toLowerCase()}})
     if(!holder) {
       return res.status(404).json({
         'message': `Ethereum address ${ethAddress} not included in migration set.`
@@ -94,11 +94,11 @@ const migrate = async (req: Request, res: Response) => {
   if (!req.body.signature || !(typeof req.body.signature === 'string')) {
     return res.status(400).send({'status': 'error', 'message': `Missing or invalid 'signature' field`})
   }
-  const ethAddress = req.body.ethPubKey.toUpperCase()
+  const ethAddress = req.body.ethPubKey
   const aeAddress = req.body.aeAddress
-  const entry = await getEntryByEthPk(ethAddress)
+  const entry = await getEntryByEthPk(ethAddress.toLowerCase())
   try {
-    const txHash = await ae.migrate(ethAddress, entry.balance, req.body.aeAddress, entry.leaf_index, entry.siblings, req.body.signature)
+    const txHash = await ae.migrate(ethAddress.toUpperCase(), entry.balance, req.body.aeAddress, entry.leaf_index, entry.siblings, req.body.signature)
     try {
       await Holder.update({
         migrateTxHash: txHash,
@@ -127,7 +127,7 @@ const importHolders = async (index: number = 0) => {
   if(index < dataArray.length) {
     var body = {
       hash: merkleTree.hashFunction(dataArray[index]),
-      eth_address: dataArray[index].split(':')[0],
+      eth_address: dataArray[index].split(':')[0].toLowerCase(),
       balance: dataArray[index].split(':')[1],
       leaf_index: index,
       migrateTxHash: ''

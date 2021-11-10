@@ -39,7 +39,7 @@ const checkInizialization = () => {
 
 const checkMigrated = async (ethAddress: string) => {
   checkInizialization()
-  var result = await contract.methods.is_migrated.get(ethAddress)
+  var result = await contract.methods.is_migrated.get(ethAddress.toUpperCase())
   return result.decodedResult
 }
 
