@@ -1,6 +1,8 @@
 const fs: any = require('fs')
 const path: any = require('path')
 
+import MerkleTree from './createMerkleTree';
+
 const getJson = (relativePath: string) => {
     const data = fs.readFileSync(path.resolve(__dirname, relativePath))
     return JSON.parse(data)
@@ -19,8 +21,10 @@ const setRequiredVariable = (variableName: string) => {
 }
 
 const dataArray = getDataArray()
+const merkleTree = new MerkleTree(dataArray)
 
 export {
     dataArray,
+    merkleTree,
     setRequiredVariable
 }

@@ -1,16 +1,13 @@
 import { Request, Response } from 'express';
 import Holder from '../holders';
 
-import MerkleTree from '../createMerkleTree';
 import * as ae from '../aeternitySdk';
 
 import logger from '../logger';
-import { dataArray } from '../helpers';
-
-const tree = new MerkleTree(dataArray)
+import { dataArray, merkleTree } from '../helpers';
 
 const rootHash = (req: Request, res: Response) => {
-  return res.send({'status': true, 'tree': {'root': tree.getRootHash(), 'length': tree.leaves.length}});
+  return res.send({'status': true, 'tree': {'root': merkleTree.getRootHash(), 'length': merkleTree.leaves.length}});
 }
 
 const getInfoByEthAddress = async (req: Request, res: Response) => {
@@ -62,8 +59,8 @@ const getHashByIndex = async (req: Request, res: Response) => {
 
 const getSiblingsByIndex = async (req: Request, res: Response) => {
   try {
-    const holder = await Holder.findOne({where: {leaf_index: req.params.index}})
-    res.send({'status': true, 'hashes': holder.dataValues.siblings})
+    const leaf_index = parseInt(req.params.index, 10)
+    res.send({'status': true, 'hashes': merkleTree.getProof(dataArray[leaf_index])})
   } catch(e) {
     logger.error('Unexpected error.', e)
     return res.status(500).json({
@@ -129,10 +126,9 @@ const getEntryByEthPk = async (ethAddress: String) => {
 const importHolders = async (index: number = 0) => {
   if(index < dataArray.length) {
     var body = {
-      hash: tree.hashFunction(dataArray[index]),
+      hash: merkleTree.hashFunction(dataArray[index]),
       eth_address: dataArray[index].split(':')[0],
       balance: dataArray[index].split(':')[1],
-      siblings: tree.getProof(dataArray[index]),
       leaf_index: index,
       migrateTxHash: ''
     }

@@ -18,7 +18,6 @@ const Holder = sequelize.define(tableName,
     hash: { type: Sequelize.STRING, allowNull: false, primaryKey: true },
     eth_address: { type: Sequelize.STRING, allowNull: false},
     balance: { type: Sequelize.STRING, allowNull: true },
-    siblings : { type: Sequelize.ARRAY(Sequelize.TEXT), allowNull: false},
     leaf_index: { type: Sequelize.INTEGER, allowNull: false },
     ae_address: { type: Sequelize.STRING, allowNull: true},
     migrateTxHash : { type: Sequelize.STRING, allowNull: true}
