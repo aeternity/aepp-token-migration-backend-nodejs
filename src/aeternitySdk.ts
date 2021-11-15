@@ -52,6 +52,11 @@ const validateValues = async (ethAddress: string, balance: string, index: number
 
 const migrate = async (ethAddress: string, amount: string, aeAddress: string, leafIndex: number, siblings: Array<string>, signature: string) => {
   checkInizialization()
+  logger.debug(`Performing migration for ${ethAddress} with target ${aeAddress}.`)
+  logger.debug(`amount: ${amount}`)
+  logger.debug(`leafIndex: ${leafIndex}`)
+  logger.debug(`siblings: ${siblings}`)
+  logger.debug(`signature: ${signature}`)
   if(signature.startsWith('0x')) {
     signature = signature.substring(2)
   }
@@ -69,9 +74,13 @@ const migrate = async (ethAddress: string, amount: string, aeAddress: string, le
           break
   }
   signature = vValue + signature.substring(0, signature.length - 2)
-  const migrated = await contract.methods.is_migrated(ethAddress).decodedResult
+  logger.debug(`Check migration.`)
+  const migrated = (await contract.methods.is_migrated(ethAddress)).decodedResult
+  logger.debug(`Is migrated: ${migrated}`)
   if(!migrated) {
+    logger.debug(`Calling migrate function of smart contract.`)
     var result = await contract.methods.migrate(amount, aeAddress, leafIndex, siblings, signature, {gas: 50000})
+    logger.debug(`Migration successful: ${result.hash}`)
     return result.hash
   } else {
     const msg = `Already performed the migration for Ethereum address: ${ethAddress}`

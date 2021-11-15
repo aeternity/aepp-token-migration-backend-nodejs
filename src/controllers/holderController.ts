@@ -97,8 +97,9 @@ const migrate = async (req: Request, res: Response) => {
   const ethAddress = req.body.ethPubKey
   const aeAddress = req.body.aeAddress
   const entry = await getEntryByEthPk(ethAddress.toLowerCase())
+  logger.debug(`DB entry: ${JSON.stringify(entry)}`)
   try {
-    const txHash = await ae.migrate(ethAddress.toUpperCase(), entry.balance, req.body.aeAddress, entry.leaf_index, entry.siblings, req.body.signature)
+    const txHash = await ae.migrate(ethAddress.toUpperCase(), entry.balance, req.body.aeAddress, entry.leaf_index, merkleTree.getProof(dataArray[entry.leaf_index]), req.body.signature)
     try {
       await Holder.update({
         migrateTxHash: txHash,
