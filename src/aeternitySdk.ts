@@ -1,33 +1,27 @@
 require('dotenv').config({path:__dirname+'/.env'})
-const fs = require('fs')
-const { Universal, Node, MemoryAccount } = require('@aeternity/aepp-sdk')
-
-const contractInterfaceSource = fs.readFileSync(__dirname + '/TokenMigrationInterface.aes', 'utf-8')
+import { AeSdk, Node, MemoryAccount, getAddressFromPriv } from '@aeternity/aepp-sdk'
+const contractAci = require('./aci/TokenMigrationACI.json')
 import { setRequiredVariable } from './helpers'
 import logger from './logger'
 
-const publicKey = setRequiredVariable('PUBLIC_KEY')
-const privateKey = setRequiredVariable('PRIVATE_KEY')
+const privateKey = setRequiredVariable('PRIVATE_KEY') as string
 let contract: any = null
 
 const init = async () => {
   logger.info(`BEGIN: Initialization of SDK and contract instance`)
-  const keyPair = {
-    "publicKey": publicKey,
-    "secretKey": privateKey
+  const keypair = {
+    secretKey: privateKey,
+    publicKey: getAddressFromPriv(privateKey)
   }
-  const client_node = await Universal({
+  const client_node = new AeSdk({
     nodes: [
       {
         name: 'node',
-        instance: await Node({
-          url: process.env.NODE_URL || 'https://mainnet.aeternity.io',
-        }),
+        instance: new Node(process.env.NODE_URL || 'https://mainnet.aeternity.io'),
       }],
-    accounts: [MemoryAccount({ keypair: keyPair })],
-    compilerUrl: process.env.COMPILER_URL || 'https://compiler.aepps.com'
+    accounts: [new MemoryAccount({ keypair })],
   });
-  contract = await client_node.getContractInstance(contractInterfaceSource, { contractAddress: process.env.CONTRACT_ADDRESS || 'ct_eJhrbPPS4V97VLKEVbSCJFpdA4uyXiZujQyLqMFoYV88TzDe6' })
+  contract = await client_node.getContractInstance({ aci: contractAci, contractAddress: process.env.CONTRACT_ADDRESS || 'ct_eJhrbPPS4V97VLKEVbSCJFpdA4uyXiZujQyLqMFoYV88TzDe6' })
   logger.info(`COMPLETE: Initialization of SDK and contract instance`)
 }
 
