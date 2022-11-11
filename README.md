@@ -19,7 +19,6 @@ DB_URL              = postgresql://user:pass@url:port/db
 TABLE_NAME          = <table_name>
 
 PRIVATE_KEY         = 52f9...
-PUBLIC_KEY          = ak_2H4...
 ```
 
 The application won't run if those variables are not set.
